@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
-[Overlay(typeof(SceneView), id: ID_SCENE_VIEWER_OVERLAY, displayName:"Scene Viewer")]
+[Overlay(typeof(SceneView), id: ID_SCENE_VIEWER_OVERLAY, displayName: "Scene Viewer")]
 [Icon("Assets/Sprites/Icons/unity_scene.png")]
 public class SceneViewerEditor : Overlay
 {
@@ -20,37 +20,43 @@ public class SceneViewerEditor : Overlay
             style =
             {
                 width = new StyleLength(new Length(120, LengthUnit.Pixel)),
-                fontSize = 10
+                backgroundColor = new StyleColor(Color.black),
+                opacity = new StyleFloat(0.85f),
+                fontSize = 14
             }
         };
-        
-        CreateSceneButtons(root);
+
+        CreateSceneButtons();
 
         return root;
     }
 
     public override void OnCreated()
     {
-        Debug.Log("SUB");
-        //Create the panel again when the scene list has been changed.
         EditorBuildSettings.sceneListChanged += CreateSceneButtons;
     }
 
     public override void OnWillBeDestroyed()
     {
         base.OnWillBeDestroyed();
-        Debug.Log("UN SUB");
         EditorBuildSettings.sceneListChanged -= CreateSceneButtons;
     }
 
-    void CreateSceneButtons()
-    {
-        CreateSceneButtons(root);
-    }
-    
-    private void CreateSceneButtons(VisualElement root)
+    private void CreateSceneButtons()
     {
         root.Clear();
+
+        if (EditorSceneManager.sceneCountInBuildSettings == 0)
+        {
+            var warningText = new TextElement();
+            warningText.text = "No Scenes in Built Settings";
+            warningText.style.fontSize = 12;
+            warningText.style.color = new StyleColor(Color.red);
+
+            root.Add(warningText);
+            return;
+        }
+
         for (int i = 0; i < EditorSceneManager.sceneCountInBuildSettings; i++)
         {
             int tempIndex = i;
