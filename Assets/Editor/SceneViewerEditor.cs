@@ -49,7 +49,7 @@ public class SceneViewerEditor : Overlay
         if (EditorSceneManager.sceneCountInBuildSettings == 0)
         {
             var warningText = new TextElement();
-            warningText.text = "No Scenes in Built Settings";
+            warningText.text = "No Scenes in Build Settings";
             warningText.style.fontSize = 12;
             warningText.style.color = new StyleColor(Color.red);
 
