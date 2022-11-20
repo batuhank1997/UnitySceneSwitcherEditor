@@ -24,13 +24,23 @@ public class SceneViewerEditor : Overlay
                 fontSize = 10
             }
         };
+        CreateSceneButtons(root);
 
+        //Create the panel again when the scene list has been changed.
+        EditorBuildSettings.sceneListChanged += () => CreateSceneButtons(root);
+
+        return root;
+    }
+
+    private void CreateSceneButtons(VisualElement root)
+    {
+        root.Clear();
         for (int i = 0; i < EditorSceneManager.sceneCountInBuildSettings; i++)
         {
             int tempIndex = i;
 
             var sceneButton = new Button(() => ButtonCallback(tempIndex));
-            
+
             string fileName = Path.GetFileName(SceneUtility.GetScenePathByBuildIndex(tempIndex));
 
             //Removes the extension part of the file name (e.g: "MainScene.unity" -> "MainScene")
@@ -38,8 +48,6 @@ public class SceneViewerEditor : Overlay
 
             root.Add(sceneButton);
         }
-
-        return root;
     }
 
     private void ButtonCallback(int index)
