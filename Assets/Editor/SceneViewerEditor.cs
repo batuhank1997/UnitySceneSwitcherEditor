@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEditor;
 using UnityEditor.Overlays;
@@ -13,10 +11,11 @@ using UnityEngine.UIElements;
 public class SceneViewerEditor : Overlay
 {
     private const string ID_SCENE_VIEWER_OVERLAY = "sceneViewerOverlay";
- 
+    private VisualElement root;
+
     public override VisualElement CreatePanelContent()
     {
-        var root = new VisualElement
+        root = new VisualElement
         {
             style =
             {
@@ -24,14 +23,31 @@ public class SceneViewerEditor : Overlay
                 fontSize = 10
             }
         };
+        
         CreateSceneButtons(root);
-
-        //Create the panel again when the scene list has been changed.
-        EditorBuildSettings.sceneListChanged += () => CreateSceneButtons(root);
 
         return root;
     }
 
+    public override void OnCreated()
+    {
+        Debug.Log("SUB");
+        //Create the panel again when the scene list has been changed.
+        EditorBuildSettings.sceneListChanged += CreateSceneButtons;
+    }
+
+    public override void OnWillBeDestroyed()
+    {
+        base.OnWillBeDestroyed();
+        Debug.Log("UN SUB");
+        EditorBuildSettings.sceneListChanged -= CreateSceneButtons;
+    }
+
+    void CreateSceneButtons()
+    {
+        CreateSceneButtons(root);
+    }
+    
     private void CreateSceneButtons(VisualElement root)
     {
         root.Clear();
